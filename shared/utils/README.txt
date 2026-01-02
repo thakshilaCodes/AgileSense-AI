@@ -1,0 +1,1 @@
+Reusable utility functions for the project, such as helpers, loggers, and common operations.

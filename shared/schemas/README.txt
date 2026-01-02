@@ -1,0 +1,1 @@
+Data schemas, validation rules, and data structure definitions.
