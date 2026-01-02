@@ -1,0 +1,1 @@
+This folder contains processed and cleaned data ready for model training or evaluation.

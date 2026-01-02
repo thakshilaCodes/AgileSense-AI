@@ -1,0 +1,1 @@
+This folder contains raw, unprocessed data collected from various sources. Files here are kept unchanged before cleaning or preprocessing.

@@ -1,0 +1,1 @@
+This folder contains annotated data used for supervised learning, including labels, tags, or classifications applied to the raw data.
