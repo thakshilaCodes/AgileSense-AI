@@ -1,0 +1,1 @@
+Contains unit tests, integration tests, and test data for the emotion service.

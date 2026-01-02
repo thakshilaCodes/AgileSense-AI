@@ -1,0 +1,1 @@
+Contains training scripts, notebooks, and data preparation for the emotion detection model.

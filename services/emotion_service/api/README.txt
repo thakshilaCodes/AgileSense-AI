@@ -1,0 +1,1 @@
+Contains API endpoints for the emotion detection service.
