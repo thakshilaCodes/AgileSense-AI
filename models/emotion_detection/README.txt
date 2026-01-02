@@ -1,0 +1,1 @@
+This folder contains the emotion detection model, training scripts, and related resources.

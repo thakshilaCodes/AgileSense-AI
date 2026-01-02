@@ -1,0 +1,1 @@
+This folder contains models and scripts for analyzing communication inclusivity and providing improvement suggestions.
