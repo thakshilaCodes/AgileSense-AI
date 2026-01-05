@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, X, Bell, User } from 'lucide-react';
+import { Menu, X, Bell } from 'lucide-react';
 
 const Header = ({ sidebarOpen, setSidebarOpen }) => {
   return (
@@ -24,15 +24,6 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
         <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
           <Bell size={20} />
         </button>
-
-        <div className="flex items-center gap-2 cursor-pointer">
-          <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
-            <User size={16} />
-          </div>
-          <span className="text-sm font-medium text-gray-700">
-            Team Leader
-          </span>
-        </div>
       </div>
     </header>
   );
