@@ -25,11 +25,11 @@ const HomePage = ({ setActiveModule }) => {
       description: 'Comprehensive tracking of requirements and sprint progress with emotion-aware insights to monitor team sentiment and workload impact.'
     },
     {
-      id: 'inclusive-communication',
-      name: 'Inclusive Communication',
+      id: 'brainstorm-platform',
+      name: 'Brainstorm Platform',
       icon: MessageSquare,
       developer: 'M.B.H. De Silva',
-      description: 'Facilitate equitable communication channels that ensure all team members, including neurodiverse individuals, can effectively contribute and be heard.'
+      description: 'Facilitate team brainstorming and idea generation with inclusive features for all contributors.'
     },
   ];
 

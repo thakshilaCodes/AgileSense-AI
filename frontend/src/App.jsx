@@ -29,9 +29,9 @@ const App = () => {
       icon: FileText,
       developer: 'Vithana P.I',
     },
-    'inclusive-communication': {
-      id: 'inclusive-communication',
-      name: 'Inclusive Communication',
+    'brainstorm-platform': {
+      id: 'brainstorm-platform',
+      name: 'Brainstorm Platform',
       icon: MessageSquare,
       developer: 'M.B.H. De Silva',
     },

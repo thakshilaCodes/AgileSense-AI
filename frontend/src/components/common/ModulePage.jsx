@@ -2,7 +2,7 @@ import React from 'react';
 import EmotionMonitoringHomePage from '../features/emotion_service/pages/EmotionMonitoringHomePage';
 import ExpertiseRecommendationHomePage from '../features/expertise_service/pages/ExpertiseRecommendationHomePage';
 import RequirementTrackerHomePage from '../features/sprint_impact_service/pages/RequirementTrackerHomePage';
-import InclusiveCommunicationHomePage from '../features/communication_service/pages/InclusiveCommunicationHomePage';
+import BrainstormPlatformHomePage from '../features/communication_service/pages/BrainstormPlatformHomePage';
 
 const ModulePage = ({ module }) => {
   const renderModulePage = () => {
@@ -13,8 +13,8 @@ const ModulePage = ({ module }) => {
         return <ExpertiseRecommendationHomePage module={module} />;
       case 'requirement-tracker':
         return <RequirementTrackerHomePage module={module} />;
-      case 'inclusive-communication':
-        return <InclusiveCommunicationHomePage module={module} />;
+      case 'brainstorm-platform':
+        return <BrainstormPlatformHomePage module={module} />;
       default:
         return <div>Module not found</div>;
     }

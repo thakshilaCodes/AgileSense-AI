@@ -34,8 +34,8 @@ const Sidebar = ({ activeModule, setActiveModule }) => {
       developer: 'Vithana P.I',
     },
     {
-      id: 'inclusive-communication',
-      name: 'Inclusive Communication',
+      id: 'brainstorm-platform',
+      name: 'Brainstorm Platform',
       icon: MessageSquare,
       developer: 'M.B.H. De Silva',
     },
