@@ -1,1 +1,0 @@
-Reusable UI components such as buttons, cards, charts, and forms.
