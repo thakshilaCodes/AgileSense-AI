@@ -367,8 +367,8 @@ const ExpertiseRecommendationHomePage = ({ module }) => {
                             ? dev.expertiseScore
                             : (dev.expertise?.[predictedCategory] ?? 0);
 
-                          const pendingCount = dev.pending_count || 0;
-                          const isOverloaded = pendingCount > 5;
+                          const workloadScore = dev.workload_score || 0;
+                          const isOverloaded = workloadScore >= 8.0;
                           const isPreference = dev.recommendation_reason === 'preference';
 
                           return (
@@ -592,7 +592,7 @@ const NotificationIssueViewModal = ({ issueId, onClose, onResolved }) => {
       <div className="bg-slate-50 rounded-[2.5rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.3)] max-w-5xl w-full max-h-[92vh] overflow-hidden border border-white/40 flex flex-col relative">
 
         {/* Header Section */}
-        <div className="relative px-10 pt-10 pb-12 shrink-0 overflow-hidden">
+        <div className="relative px-10 pt-10 pb-6 shrink-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-700" />
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-48 -mt-48" />
 
@@ -622,7 +622,7 @@ const NotificationIssueViewModal = ({ issueId, onClose, onResolved }) => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-10 pb-10 -mt-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-10 pb-10 pt-6 custom-scrollbar">
           {loading ? (
             <div className="bg-white rounded-[2rem] p-20 flex flex-col items-center justify-center shadow-xl border border-slate-100">
               <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-6" />
@@ -697,8 +697,8 @@ const NotificationIssueViewModal = ({ issueId, onClose, onResolved }) => {
               </div>
 
               {/* Right Column: Resolution Actions */}
-              <div className="lg:col-span-5 h-full">
-                <div className="bg-slate-900 rounded-[2rem] p-8 border border-slate-800 shadow-2xl h-full flex flex-col">
+              <div className="lg:col-span-5">
+                <div className="bg-slate-900 rounded-[2rem] p-8 border border-slate-800 shadow-2xl flex flex-col min-h-[500px]">
                   <div className="flex items-center gap-4 mb-8">
                     <div className="w-1.5 h-6 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]" />
                     <h3 className="text-[10px] font-black text-white uppercase tracking-widest">Resolution Terminal</h3>
@@ -720,7 +720,7 @@ const NotificationIssueViewModal = ({ issueId, onClose, onResolved }) => {
                           <button
                             onClick={handleAcceptMission}
                             disabled={isAccepting}
-                            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-500 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-20 shadow-xl mb-4"
+                            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-500 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-20 shadow-xl"
                           >
                             {isAccepting ? (
                               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

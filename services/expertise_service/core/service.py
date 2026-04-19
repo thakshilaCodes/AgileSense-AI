@@ -72,6 +72,8 @@ def _enrich_developer_profile(dev: DeveloperProfile) -> DeveloperProfile:
     # Auto-status logic for overloaded devs
     if workload >= 8.0:
         dev.status = "Busy"
+    else:
+        dev.status = "Active"
     return dev
 
 
@@ -423,9 +425,10 @@ def get_all_issues(status: str = None, page: int = 1, limit: int = 50) -> IssueL
                 workload = _calculate_workload(dev)
                 issue.assignedToCapacity = max(0, int(100 - (workload * 10)))
                 # Auto-Busy logic: if workload >= 8, they are Busy
-                current_status = getattr(dev, "status", "Active")
                 if workload >= 8.0:
                     current_status = "Busy"
+                else:
+                    current_status = "Active"
                 issue.assignedToStatus = current_status
         
         # 2. Dynamic Recommendation Generation (If missing)
@@ -453,6 +456,18 @@ def get_all_issues(status: str = None, page: int = 1, limit: int = 50) -> IssueL
             except Exception as e:
                 print(f"Error generating dynamic recommendations for {issue.id}: {e}")
                 issue.topExperts = []
+        else:
+            # Sync existing experts with true real-time capacity
+            updated_experts = []
+            for exp in issue.topExperts:
+                dev = get_developer_by_email(exp['email'].lower())
+                if dev:
+                    workload = _calculate_workload(dev)
+                    exp['workload_score'] = workload
+                    exp['capacity_percentage'] = max(0, int(100 - (workload * 10)))
+                    exp['pending_count'] = dev.pending_count
+                updated_experts.append(exp)
+            issue.topExperts = updated_experts
                 
     return IssueListResponse(issues=issues, total=total)
 
@@ -498,11 +513,18 @@ def update_issue(issue_id: str, payload: IssueUpdatePayload) -> Optional[Issue]:
 
 def assign_issue_from_dashboard(req: IssueAssignRequest) -> Issue:
     """Assign issue to developer from Project Manager dashboard."""
+    # Check if developer is overloaded (Server-side safety check)
+    dev = get_developer_by_email(req.developerEmail)
+    if dev:
+        workload = _calculate_workload(dev)
+        capacity = max(0, int(100 - (workload * 10)))
+        if capacity < 30:
+            raise ValueError(f"Cannot assign issue: {req.developerName} is currently overloaded (Capacity: {capacity}%).")
+            
     # Update main issue
     issue = assign_issue_to_dev(req.issueId, req.developerEmail, req.developerName)
     
     # Also add to developer's pending issues
-    dev = get_developer_by_email(req.developerEmail)
     if dev:
         pending_issue = PendingIssue(
             id=issue.id,

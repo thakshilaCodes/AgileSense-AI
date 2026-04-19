@@ -233,7 +233,15 @@ def resolve_issue(developer_email: str, category: str, issue_id: str, resolved_a
             ]
     
     if not pending_issue:
-        raise ValueError(f"Issue {issue_id} not found in pending issues")
+        # Check if it was already resolved (e.g. double click or retry)
+        if category in doc["resolvedIssues"]:
+            existing_resolved_ids = [i.get("id") for i in doc["resolvedIssues"][category]]
+            if issue_id in existing_resolved_ids:
+                return DeveloperProfile(id=str(doc["_id"]), **doc)
+        
+        # If deeply missing, fail gracefully rather than crashing everything
+        print(f"Warning: Issue {issue_id} not found in pending issues for {developer_email}")
+        return DeveloperProfile(id=str(doc["_id"]), **doc)
     
     # Add to resolved
     if category not in doc["resolvedIssues"]:
@@ -256,10 +264,25 @@ def resolve_issue(developer_email: str, category: str, issue_id: str, resolved_a
     if issue_id not in existing_ids:
         doc["resolvedIssues"][category].append(resolved_issue)
     
-    # Update both
+    # 5. Continuous Learning: Increment expertise score and solved counts
+    updates = {
+        "pendingIssues": doc["pendingIssues"], 
+        "resolvedIssues": doc["resolvedIssues"]
+    }
+    
+    # Safely bump expertise score (+0.02) and jira count (+1)
+    if "expertise" in doc:
+        current_score = float(doc["expertise"].get(category, 0.0))
+        new_score = min(1.0, current_score + 0.02)
+        updates[f"expertise.{category}"] = new_score
+        
+    if "jiraIssuesSolved" in doc:
+        current_count = int(doc["jiraIssuesSolved"].get(category, 0))
+        updates[f"jiraIssuesSolved.{category}"] = current_count + 1
+
     col.update_one(
         {"email": developer_email},
-        {"$set": {"pendingIssues": doc["pendingIssues"], "resolvedIssues": doc["resolvedIssues"]}}
+        {"$set": updates}
     )
     
     updated_doc = col.find_one({"email": developer_email})

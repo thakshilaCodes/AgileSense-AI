@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { LogIn, UserPlus, LogOut, Shield, ChevronRight } from 'lucide-react';
+import { LogIn, UserPlus, LogOut, Shield, ChevronRight, AlertTriangle } from 'lucide-react';
 import { getCurrentUser, setAuthToken, setCurrentUser, logout } from '../utils/userContext';
 import NotificationsDropdown from './NotificationsDropdown';
 
@@ -79,7 +79,7 @@ const AuthPanel = ({ onAuthChanged, onNotificationClick }) => {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 p-10 max-w-xl mx-auto relative overflow-hidden group">
+    <div className="absolute top-20 right-6 w-full max-w-md bg-white rounded-3xl shadow-2xl shadow-slate-200/60 border border-slate-200 p-8 z-50 overflow-y-auto max-h-[80vh] custom-scrollbar group origin-top-right animate-in fade-in zoom-in-95 duration-200">
       <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16" />
 
       <div className="flex flex-col items-center text-center mb-10 relative z-10">

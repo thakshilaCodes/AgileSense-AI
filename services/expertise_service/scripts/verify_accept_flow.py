@@ -22,7 +22,7 @@ def test_accept_flow():
     # 2. Assign to Alex
     assign_payload = {
         "issueId": issue_id,
-        "developerEmail": "alex@company.com",
+        "developerEmail": "alex@gmail.com",
         "developerName": "Alex"
     }
     # Note: Requires manager role, but we use internal seeded data for simplicity 
@@ -36,7 +36,7 @@ def test_accept_flow():
     print(f"Assigned issue status: {issue['status']}, Assigned to: {issue['assignedTo']}")
 
     # 3. Accept the mission
-    params = {"developerEmail": "alex@company.com"}
+    params = {"developerEmail": "alex@gmail.com"}
     res = requests.post(f"{API_BASE}/api/expertise/issues/{issue_id}/accept", params=params)
     print(f"Accept Response Code: {res.status_code}")
     
@@ -47,7 +47,7 @@ def test_accept_flow():
     
     # 5. Verify in Alex's profile (Wait a bit for DB sync)
     time.sleep(1)
-    res = requests.get(f"{API_BASE}/api/expertise/developers/alex@company.com/detail")
+    res = requests.get(f"{API_BASE}/api/expertise/developers/alex@gmail.com/detail")
     print(f"Profile Fetch Status: {res.status_code}")
     if res.status_code != 200:
         print(f"Error Response: {res.text}")
