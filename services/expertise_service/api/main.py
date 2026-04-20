@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 from typing import List, Optional
+from datetime import datetime, timedelta
+# Server Reload Trigger
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -178,6 +180,20 @@ def complete_issue_endpoint(
     return service.mark_issue_complete(issue_id, developerEmail, resolutionNote)
 
 
+@app.post("/api/expertise/issues/{issue_id}/accept", response_model=Issue)
+def accept_issue_endpoint(
+    issue_id: str,
+    developerEmail: str = Query(..., description="Email of developer accepting the issue")
+) -> Issue:
+    """Accept an assigned issue."""
+    try:
+        return service.accept_issue(issue_id, developerEmail)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+
+
 @app.get("/api/expertise/developers/{email}/issues", response_model=List[Issue])
 def get_developer_issues_endpoint(email: str) -> List[Issue]:
     """Get all issues assigned to a developer."""
@@ -193,6 +209,16 @@ def upsert_developer_profile_endpoint(payload: DeveloperProfileIn) -> DeveloperP
 def get_config_endpoint():
     """Get system configuration including categories."""
     return service.get_system_config()
+
+
+@app.get("/api/expertise/analytics")
+def get_analytics_endpoint(user: UserPublic = Depends(require_manager)):
+    """Get aggregate analytics for the manager dashboard."""
+    try:
+        return service.get_system_analytics()
+    except Exception as e:
+        print(f"ERROR [API]: Analytics failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/expertise/developers/{email}", response_model=DeveloperProfile)
