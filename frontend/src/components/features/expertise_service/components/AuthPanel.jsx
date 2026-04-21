@@ -109,6 +109,29 @@ const AuthPanel = ({ onAuthChanged, onNotificationClick }) => {
         >
           Join
         </button>
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h2>
+        <p className="text-sm text-slate-500 mt-2 font-medium">Log in to manage your expertise and issues</p>
+      </div>
+
+      <div className="bg-slate-100 p-1 rounded-xl mb-8 flex relative z-10 w-fit mx-auto">
+        <button
+          onClick={() => setMode('login')}
+          className={`px-8 py-2 text-xs font-bold uppercase tracking-widest transition-all rounded-lg ${mode === 'login'
+            ? 'bg-white text-blue-600 shadow-sm'
+            : 'text-slate-500 hover:text-slate-800'
+            }`}
+        >
+          Sign In
+        </button>
+        <button
+          onClick={() => setMode('register')}
+          className={`px-8 py-2 text-xs font-bold uppercase tracking-widest transition-all rounded-lg ${mode === 'register'
+            ? 'bg-white text-blue-600 shadow-sm'
+            : 'text-slate-500 hover:text-slate-800'
+            }`}
+        >
+          Join
+        </button>
       </div>
 
       <form onSubmit={submit} className="space-y-6 relative z-10">

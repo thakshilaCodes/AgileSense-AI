@@ -94,6 +94,8 @@ class DeveloperProfileIn(BaseModel):
     githubCommits: CategoryCounts
     githubPRs: Optional[CategoryCounts] = None
     githubReviews: Optional[CategoryCounts] = None
+    githubPRs: Optional[CategoryCounts] = None
+    githubReviews: Optional[CategoryCounts] = None
     preferences: Optional[CategoryPreferences] = None
     workHistory: Optional[List[WorkHistoryItem]] = None
     pendingIssues: Optional[Dict[str, List[PendingIssue]]] = None

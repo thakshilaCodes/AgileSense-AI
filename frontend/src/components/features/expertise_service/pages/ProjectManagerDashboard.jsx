@@ -208,17 +208,6 @@ const ProjectManagerDashboard = ({ refreshTrigger }) => {
   };
 
 
-  const getPriorityColor = (priority) => {
-    switch (priority?.toLowerCase()) {
-      case 'critical': return 'bg-rose-100 text-rose-800 border-rose-300';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'medium': return 'bg-amber-100 text-amber-800 border-amber-300';
-      case 'low': return 'bg-slate-100 text-slate-800 border-slate-300';
-      default: return 'bg-slate-100 text-slate-800 border-slate-300';
-    }
-  };
-
-
   const stats = {
     total: issues.length,
     pending: issues.filter(i => i.status === 'pending').length,
@@ -227,7 +216,7 @@ const ProjectManagerDashboard = ({ refreshTrigger }) => {
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-10">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-blue-600 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center text-white">
@@ -702,7 +691,7 @@ const ProjectManagerDashboard = ({ refreshTrigger }) => {
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-8 border-t border-slate-50">
+                      <div className="grid grid-cols-2 gap-8 pt-8 border-t border-slate-50">
                         <div>
                           <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-3">Core Category</h4>
                           <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl border border-blue-100 font-bold text-xs">
@@ -713,12 +702,6 @@ const ProjectManagerDashboard = ({ refreshTrigger }) => {
                           <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-3">Workflow State</h4>
                           <div className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-xl border font-bold text-xs uppercase ${getStatusColor(selectedIssue.status)}`}>
                             {selectedIssue.status}
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-3">Severity / Priority</h4>
-                          <div className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-xl border font-bold text-xs uppercase ${getPriorityColor(selectedIssue.priority)}`}>
-                            {selectedIssue.priority || 'medium'}
                           </div>
                         </div>
                         <div>
@@ -812,7 +795,7 @@ const ProjectManagerDashboard = ({ refreshTrigger }) => {
 
                               <div className="grid grid-cols-3 gap-3 mb-6 relative z-10">
                                 <div className="bg-white p-3 rounded-xl border border-slate-100 flex flex-col justify-center text-center">
-                                  <p className="text-[7px] font-black uppercase text-slate-400 mb-1">Score</p>
+                                  <p className="text-[7px] font-black uppercase text-slate-400 mb-1">Auth</p>
                                   <p className="text-lg font-black text-blue-600 tracking-tighter">{(expert.expertiseScore * 100).toFixed(0)}%</p>
                                 </div>
                                 <div className="bg-white p-3 rounded-xl border border-slate-100 flex flex-col justify-center text-center">
@@ -848,17 +831,10 @@ const ProjectManagerDashboard = ({ refreshTrigger }) => {
                                 {selectedIssue.status === 'pending' && (
                                   <button
                                     onClick={() => handleAssignIssue(selectedIssue, expert.email, expert.name)}
-                                    disabled={assigning[selectedIssue.id] || (expert.capacity_percentage ?? 100) < 30}
-                                    className={`w-full py-4 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-30 shadow-lg ${
-                                      (expert.capacity_percentage ?? 100) < 30
-                                        ? 'bg-slate-400 cursor-not-allowed shadow-none'
-                                        : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20'
-                                    }`}
+                                    disabled={assigning[selectedIssue.id]}
+                                    className="w-full py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-30 shadow-lg shadow-blue-600/20"
                                   >
-                                    {(expert.capacity_percentage ?? 100) < 30 
-                                      ? 'Overloaded - Blocked' 
-                                      : assigning[selectedIssue.id] ? 'Assigning...' : 'Assign Individual'
-                                    }
+                                    {assigning[selectedIssue.id] ? 'Assigning...' : 'Assign Individual'}
                                   </button>
                                 )}
                               </div>
@@ -992,4 +968,3 @@ const ProjectManagerDashboard = ({ refreshTrigger }) => {
 };
 
 export default ProjectManagerDashboard;
-

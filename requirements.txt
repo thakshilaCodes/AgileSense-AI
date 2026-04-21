@@ -2,7 +2,7 @@ fastapi
 uvicorn[standard]
 scikit-learn
 joblib
-pymongo
+pymongo[srv]
 pydantic
 email-validator
 python-jose[cryptography]
