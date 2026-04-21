@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { LogIn, UserPlus, LogOut, Shield, ChevronRight } from 'lucide-react';
+import { LogIn, UserPlus, LogOut, Shield, ChevronRight, AlertTriangle } from 'lucide-react';
 import { getCurrentUser, setAuthToken, setCurrentUser, logout } from '../utils/userContext';
 import NotificationsDropdown from './NotificationsDropdown';
 
@@ -79,7 +79,7 @@ const AuthPanel = ({ onAuthChanged, onNotificationClick }) => {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 p-10 max-w-xl mx-auto relative overflow-hidden group">
+    <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 p-10 max-w-xl mx-auto absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full z-50 overflow-y-auto max-h-[90vh] custom-scrollbar overflow-x-hidden group">
       <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16" />
 
       <div className="flex flex-col items-center text-center mb-10 relative z-10">
@@ -184,6 +184,43 @@ const AuthPanel = ({ onAuthChanged, onNotificationClick }) => {
           )}
         </button>
       </form>
+      {mode === 'login' && (
+        <div className="mt-8 border-t border-slate-100 pt-8 relative z-10">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Quick Select Profile</p>
+          <div className="max-h-[220px] overflow-y-auto pr-2 custom-scrollbar space-y-2">
+            {[
+              { email: 'alex@gmail.com', name: 'Expert Alex', role: 'developer' },
+              { email: 'sarah@gmail.com', name: 'Ready Sarah', role: 'developer' },
+              { email: 'natty@gmail.com', name: 'Natty (Project Manager)', role: 'manager' },
+              { email: 'elena@gmail.com', name: 'Busy Elena', role: 'developer' },
+              { email: 'william@tech.com', name: 'William', role: 'developer' },
+              { email: 'alice@example.com', name: 'Alice Perera', role: 'developer' },
+              { email: 'bob@example.com', name: 'Bob Smith', role: 'developer' }
+            ].map((u) => (
+              <button
+                key={u.email}
+                onClick={() => {
+                  setEmail(u.email);
+                  setRole(u.role);
+                  setPassword('password');
+                }}
+                className="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-200 rounded-xl transition-all group/user"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-[10px] font-black text-blue-600 uppercase">
+                    {u.name.charAt(0)}
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[11px] font-bold text-slate-900 group-hover/user:text-blue-700">{u.name}</p>
+                    <p className="text-[9px] text-slate-400 font-medium">{u.email}</p>
+                  </div>
+                </div>
+                <ChevronRight size={14} className="text-slate-300 group-hover/user:text-blue-500 transition-colors" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

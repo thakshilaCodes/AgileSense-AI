@@ -213,6 +213,7 @@ const ExpertiseRecommendationHomePage = ({ module }) => {
               developerEmail={currentUser?.email}
               isSubmitter={false}
               isModal={false}
+              refreshTrigger={refreshTrigger}
               onClose={() => setActiveTab('submit')}
             />
           </div>
@@ -720,7 +721,7 @@ const NotificationIssueViewModal = ({ issueId, onClose, onResolved }) => {
                           <button
                             onClick={handleAcceptMission}
                             disabled={isAccepting}
-                            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-500 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-20 shadow-xl mb-4"
+                            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-500 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-20 shadow-xl"
                           >
                             {isAccepting ? (
                               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

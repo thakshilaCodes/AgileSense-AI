@@ -104,7 +104,12 @@ def get_issues_by_developer(developer_email: str) -> List[Issue]:
     """Get all issues assigned to a developer."""
     col = _get_issues_collection()
     issues = []
-    for doc in col.find({"assignedTo": developer_email}).sort("createdAt", -1):
+    # Only return issues that are NOT resolved or done
+    query = {
+        "assignedTo": developer_email,
+        "status": {"$nin": ["resolved", "done"]}
+    }
+    for doc in col.find(query).sort("createdAt", -1):
         issues.append(Issue(**doc))
     return issues
 

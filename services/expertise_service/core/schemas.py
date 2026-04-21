@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 
 class ExpertiseScores(BaseModel):
@@ -66,6 +66,8 @@ class PendingIssue(BaseModel):
     dueDate: Optional[str] = None
     submittedBy: Optional[str] = None  # Email of person who raised the issue
 
+    model_config = ConfigDict(extra='ignore')
+
 
 class ResolvedIssue(BaseModel):
     id: str
@@ -77,6 +79,8 @@ class ResolvedIssue(BaseModel):
     resolvedAt: Optional[str] = None
     submittedBy: Optional[str] = None
     resolutionNote: Optional[str] = None
+
+    model_config = ConfigDict(extra='ignore')
 
 
 class DeveloperProfileIn(BaseModel):
@@ -102,6 +106,8 @@ class DeveloperProfile(DeveloperProfileIn):
     pending_count: Optional[int] = None
     workload_score: float = 0.0
     capacity_percentage: int = 100
+
+    model_config = ConfigDict(extra='ignore')
 
 
 class UserPublic(BaseModel):
@@ -155,6 +161,8 @@ class Notification(BaseModel):
     createdAt: str
     read: bool = False
 
+    model_config = ConfigDict(extra='ignore')
+
 
 class DeveloperProfileDetailResponse(BaseModel):
     profile: DeveloperProfile
@@ -194,6 +202,8 @@ class Issue(BaseModel):
     resolvedAt: Optional[str] = None
     resolutionNote: Optional[str] = None
     topExperts: Optional[List[Dict]] = None  # Top 3 recommended experts
+
+    model_config = ConfigDict(extra='ignore')
 
 
 class IssueCreateRequest(BaseModel):

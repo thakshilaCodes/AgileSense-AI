@@ -233,7 +233,15 @@ def resolve_issue(developer_email: str, category: str, issue_id: str, resolved_a
             ]
     
     if not pending_issue:
-        raise ValueError(f"Issue {issue_id} not found in pending issues")
+        # Check if it was already resolved (e.g. double click or retry)
+        if category in doc["resolvedIssues"]:
+            existing_resolved_ids = [i.get("id") for i in doc["resolvedIssues"][category]]
+            if issue_id in existing_resolved_ids:
+                return DeveloperProfile(id=str(doc["_id"]), **doc)
+        
+        # If deeply missing, fail gracefully rather than crashing everything
+        print(f"Warning: Issue {issue_id} not found in pending issues for {developer_email}")
+        return DeveloperProfile(id=str(doc["_id"]), **doc)
     
     # Add to resolved
     if category not in doc["resolvedIssues"]:
@@ -256,10 +264,16 @@ def resolve_issue(developer_email: str, category: str, issue_id: str, resolved_a
     if issue_id not in existing_ids:
         doc["resolvedIssues"][category].append(resolved_issue)
     
-    # Update both
+    # Update both and increment solved count for the category
     col.update_one(
         {"email": developer_email},
-        {"$set": {"pendingIssues": doc["pendingIssues"], "resolvedIssues": doc["resolvedIssues"]}}
+        {
+            "$set": {
+                "pendingIssues": doc["pendingIssues"],
+                "resolvedIssues": doc["resolvedIssues"]
+            },
+            "$inc": {f"jiraIssuesSolved.{category}": 1}
+        }
     )
     
     updated_doc = col.find_one({"email": developer_email})
@@ -276,5 +290,30 @@ def get_resolved_issues_by_category(developer_email: str, category: str) -> List
         return []
     
     return [ResolvedIssue(**issue) for issue in doc.resolvedIssues[category]]
+
+
+def increment_expertise_score(developer_email: str, category: str, increment: float = 0.02) -> float:
+    """Increment expertise score for a category, capped at 1.0."""
+    developer_email = developer_email.lower()
+    col = _get_collection()
+    
+    # 1. Atomic increment
+    col.update_one(
+        {"email": developer_email},
+        {"$inc": {f"expertise.{category}": increment}}
+    )
+    
+    # 2. Enforce cap and return new value
+    doc = col.find_one({"email": developer_email})
+    current_score = doc.get("expertise", {}).get(category, 0.0)
+    
+    if current_score > 1.0:
+        col.update_one(
+            {"email": developer_email},
+            {"$set": {f"expertise.{category}": 1.0}}
+        )
+        return 1.0
+        
+    return round(current_score, 4)
 
 

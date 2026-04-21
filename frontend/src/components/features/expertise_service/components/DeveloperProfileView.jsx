@@ -12,7 +12,8 @@ const DeveloperProfileView = ({
   submitterName = null,
   submitterRole = 'developer',
   isBrief = false,
-  isModal = true
+  isModal = true,
+  refreshTrigger = 0
 }) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,7 +53,7 @@ const DeveloperProfileView = ({
   useEffect(() => {
     fetchProfile();
     fetchAssignedIssues();
-  }, [developerEmail]);
+  }, [developerEmail, refreshTrigger]);
 
   useEffect(() => {
     if (selectedCategory && categories.length > 0) {
@@ -156,9 +157,9 @@ const DeveloperProfileView = ({
       // Refresh local state
       fetchAssignedIssues();
       fetchProfile();
-      alert('Mission Accepted!');
+      alert('Issue Accepted!');
     } catch (err) {
-      alert(err.response?.data?.detail || 'Failed to accept mission.');
+      alert(err.response?.data?.detail || 'Failed to accept issue.');
     }
   };
 
@@ -442,7 +443,7 @@ const DeveloperProfileView = ({
                               : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                               }`}
                           >
-                            Accept Mission
+                            Accept Issue
                           </button>
                         ) : (
                           <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl">

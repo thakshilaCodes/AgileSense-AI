@@ -16,6 +16,7 @@ from .repository import (
     append_work_history,
     upsert_developer,
     update_pending_issue_status,
+    increment_expertise_score,
 )
 from .issue_repository import (
     create_issue,
@@ -72,6 +73,8 @@ def _enrich_developer_profile(dev: DeveloperProfile) -> DeveloperProfile:
     # Auto-status logic for overloaded devs
     if workload >= 8.0:
         dev.status = "Busy"
+    else:
+        dev.status = "Active"
     return dev
 
 
@@ -423,9 +426,10 @@ def get_all_issues(status: str = None, page: int = 1, limit: int = 50) -> IssueL
                 workload = _calculate_workload(dev)
                 issue.assignedToCapacity = max(0, int(100 - (workload * 10)))
                 # Auto-Busy logic: if workload >= 8, they are Busy
-                current_status = getattr(dev, "status", "Active")
                 if workload >= 8.0:
                     current_status = "Busy"
+                else:
+                    current_status = "Active"
                 issue.assignedToStatus = current_status
         
         # 2. Dynamic Recommendation Generation (If missing)
@@ -453,6 +457,18 @@ def get_all_issues(status: str = None, page: int = 1, limit: int = 50) -> IssueL
             except Exception as e:
                 print(f"Error generating dynamic recommendations for {issue.id}: {e}")
                 issue.topExperts = []
+        else:
+            # Sync existing experts with true real-time capacity
+            updated_experts = []
+            for exp in issue.topExperts:
+                dev = get_developer_by_email(exp['email'].lower())
+                if dev:
+                    workload = _calculate_workload(dev)
+                    exp['workload_score'] = workload
+                    exp['capacity_percentage'] = max(0, int(100 - (workload * 10)))
+                    exp['pending_count'] = dev.pending_count
+                updated_experts.append(exp)
+            issue.topExperts = updated_experts
                 
     return IssueListResponse(issues=issues, total=total)
 
@@ -498,11 +514,18 @@ def update_issue(issue_id: str, payload: IssueUpdatePayload) -> Optional[Issue]:
 
 def assign_issue_from_dashboard(req: IssueAssignRequest) -> Issue:
     """Assign issue to developer from Project Manager dashboard."""
+    # Check if developer is overloaded (Server-side safety check)
+    dev = get_developer_by_email(req.developerEmail)
+    if dev:
+        workload = _calculate_workload(dev)
+        capacity = max(0, int(100 - (workload * 10)))
+        if capacity < 30:
+            raise ValueError(f"Cannot assign issue: {req.developerName} is currently overloaded (Capacity: {capacity}%).")
+            
     # Update main issue
     issue = assign_issue_to_dev(req.issueId, req.developerEmail, req.developerName)
     
     # Also add to developer's pending issues
-    dev = get_developer_by_email(req.developerEmail)
     if dev:
         pending_issue = PendingIssue(
             id=issue.id,
@@ -560,8 +583,8 @@ def accept_issue(issue_id: str, developer_email: str) -> Issue:
         for mgr in managers:
             create_notification(
                 user_email=mgr.email,
-                title="Mission Accepted",
-                message=f"Expert {developer_email} has accepted the mission: {issue.title}. Status is now In Progress.",
+                title="Issue Accepted",
+                message=f"Expert {developer_email} has accepted the issue: {issue.title}. Status is now In Progress.",
                 type="system",
                 related_issue_id=issue.id
             )
@@ -582,6 +605,19 @@ def mark_issue_complete(issue_id: str, developer_email: str, resolution_note: Op
         if dev and dev.pendingIssues and issue.category in dev.pendingIssues:
             # Remove from pending and add to resolved
             resolve_issue(developer_email, issue.category, issue_id, resolution_note=resolution_note)
+            
+            # Continuous Learning: Increment expertise score
+            new_score = increment_expertise_score(developer_email, issue.category)
+            
+            # Notify developer of growth
+            create_notification(
+                user_email=developer_email,
+                title="Expertise Level Up!",
+                message=f"By resolving '{issue.title}', your {issue.category} expertise has increased to {new_score * 100:.0f}%. Keep it up!",
+                type="system",
+                related_issue_id=issue.id
+            )
+
             # Add a lightweight history record (so future recommendations learn from this)
             try:
                 append_work_history(

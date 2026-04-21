@@ -4,7 +4,7 @@ import { Menu, X, Bell } from 'lucide-react';
 const Header = ({ sidebarOpen, setSidebarOpen }) => {
   return (
     <header className="w-full h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-      
+
       {/* Left section */}
       <div className="flex items-center gap-4">
         <button

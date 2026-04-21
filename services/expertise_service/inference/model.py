@@ -38,8 +38,18 @@ def _load_vectorizer_and_model():
 
 def predict_issue_category(text: str) -> str:
     """
-    Predicts the issue category using the loaded model.
+    Predicts the issue category using a hybrid approach:
+    1. Heuristic rules for common UI/UX patterns.
+    2. Logistic Regression model for general classification.
     """
+    text_lower = text.lower()
+    
+    # Heuristic: Prioritize UI for visual/state-based issues
+    ui_keywords = ["screen", "freeze", "stuck", "ui", "button", "layout", "css", "color", "alignment", "rendering"]
+    if any(kw in text_lower for kw in ui_keywords):
+        return "UI"
+
+    # Fallback to ML Model
     vectorizer, model = _load_vectorizer_and_model()
     X = vectorizer.transform([text])
     pred = model.predict(X)[0]
